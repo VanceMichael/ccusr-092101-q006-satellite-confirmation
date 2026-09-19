@@ -1,0 +1,6 @@
+{
+  "launch_ref": "LAUNCH-DEMO",
+  "spacecraft_ref": "PIESAT-2-13",
+  "event_kind": "first_contact",
+  "source_sequence": 7
+}

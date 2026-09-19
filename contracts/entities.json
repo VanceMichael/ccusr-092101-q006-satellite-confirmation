@@ -1,0 +1,19 @@
+{
+  "schema_version": "1",
+  "domain": "多星入轨确认事件账",
+  "required_fields": [
+    "launch_ref",
+    "spacecraft_ref",
+    "event_kind",
+    "source_ref",
+    "source_sequence",
+    "occurred_at"
+  ],
+  "time_format": "ISO 8601 with offset",
+  "sample": {
+    "launch_ref": "LAUNCH-DEMO",
+    "spacecraft_ref": "PIESAT-2-13",
+    "event_kind": "first_contact",
+    "source_sequence": 7
+  }
+}
