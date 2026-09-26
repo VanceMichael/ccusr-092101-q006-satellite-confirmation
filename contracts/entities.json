@@ -1,19 +1,75 @@
 {
-  "schema_version": "1",
-  "domain": "多星入轨确认事件账",
-  "required_fields": [
-    "launch_ref",
-    "spacecraft_ref",
-    "event_kind",
-    "source_ref",
-    "source_sequence",
-    "occurred_at"
+  "schema_version": "2",
+  "domain": "多星观测订单编排",
+  "conventions": {
+    "time_format": "ISO 8601 with offset",
+    "identity": "外部主体一律使用不含真实身份信息的引用编号（ref）",
+    "attachments": "只记录受控引用或 sha256 摘要",
+    "event_provenance": "业务事件携带来源 source_ref 与 source_sequence，保留来源系统对事实的责任边界"
+  },
+  "enums": {
+    "timeliness": ["routine", "urgent", "emergency"],
+    "order_status": [
+      "submitted", "candidate", "planned", "scheduled", "displaced_pending",
+      "in_progress", "fulfilled", "closed", "cancelled"
+    ],
+    "assignment_state": [
+      "scheduled", "executing", "imaged", "failed", "cancelled", "displaced"
+    ],
+    "opportunity_status": ["forecast", "revised", "revoked", "executed"],
+    "product_status": ["assembling", "complete", "reprocessing", "withdrawn"],
+    "approval_status": ["pending", "approved", "rejected"],
+    "replan_trigger": [
+      "spacecraft_unavailable", "opportunity_revised", "receipt_late",
+      "execution_failed", "emergency_displacement"
+    ]
+  },
+  "order_required_fields": [
+    "ref",
+    "department",
+    "requester_ref",
+    "target_ref|target_name",
+    "scope_code",
+    "imaging_mode",
+    "timeliness",
+    "window_start",
+    "window_end",
+    "deliverable"
   ],
-  "time_format": "ISO 8601 with offset",
+  "order_optional_fields": [
+    "deadline_at",
+    "usage_boundary",
+    "require_onboard_processing"
+  ],
+  "invariants": [
+    "同一成像机会在任何时刻最多存在一个有效分配（scheduled/executing/imaged）",
+    "目标重叠仅产生合并提示；不同授权范围禁止合并与数据共享",
+    "应急插单必须先展示被挤出订单，经 approver_ref 批准后才生效",
+    "冻结计划中的机会不再进入后续候选",
+    "卫星不可用、机会修订、回执逾期只影响对应未完成订单，已交付产品继续引用原计划",
+    "产品版本由分片 sha256 清单摘要唯一确定；缺片/重处理/撤回均产生订阅通知"
+  ],
+  "candidate_scoring": {
+    "coverage": 40,
+    "earliness": 20,
+    "energy_efficiency": 10,
+    "storage_efficiency": 10,
+    "capability_version": 6,
+    "onboard_intelligence": 4
+  },
   "sample": {
-    "launch_ref": "LAUNCH-DEMO",
-    "spacecraft_ref": "PIESAT-2-13",
-    "event_kind": "first_contact",
-    "source_sequence": 7
+    "ref": "ORD-FIRE-2026-09-27",
+    "department": "应急管理部门",
+    "requester_ref": "DUTY-7",
+    "target_ref": "TGT-RIVER-MOUTH",
+    "scope_code": "SCOPE-EMERGENCY-OPS",
+    "imaging_mode": "optical_hr",
+    "timeliness": "emergency",
+    "window_start": "2026-09-26T00:00:00Z",
+    "window_end": "2026-09-27T12:00:00Z",
+    "deadline_at": "2026-09-27T12:00:00Z",
+    "deliverable": "应急值班席-GIS终端",
+    "usage_boundary": "限本次灾情研判，不得转作商业用途",
+    "require_onboard_processing": true
   }
 }

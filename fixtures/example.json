@@ -1,6 +1,70 @@
 {
-  "launch_ref": "LAUNCH-DEMO",
-  "spacecraft_ref": "PIESAT-2-13",
-  "event_kind": "first_contact",
-  "source_sequence": 7
+  "scenario": "PIESAT-2 四星观测编排示例（不含真实身份信息）",
+  "scopes": [
+    { "code": "SCOPE-EMERGENCY-OPS", "owner_dept": "应急管理部门", "description": "灾情应急观测授权" },
+    { "code": "SCOPE-BASE-MAPPING", "owner_dept": "基础测绘部门", "description": "基础测绘更新授权" }
+  ],
+  "spacecraft": [
+    { "ref": "PIESAT-2-13", "capability_version": "2.3.0", "supported_modes": ["optical_hr", "video"], "onboard_intelligence": true },
+    { "ref": "PIESAT-2-14", "capability_version": "2.3.0", "supported_modes": ["optical_hr", "sar"], "onboard_intelligence": true },
+    { "ref": "PIESAT-2-15", "capability_version": "2.1.0", "supported_modes": ["optical_hr"], "onboard_intelligence": true },
+    { "ref": "PIESAT-2-16", "capability_version": "1.5.0", "supported_modes": ["optical_hr"], "onboard_intelligence": false }
+  ],
+  "target": {
+    "ref": "TGT-RIVER-MOUTH",
+    "name": "河口断面",
+    "aliases": ["河口监测区", "RIVER-MOUTH-A"],
+    "bbox": [110.0, 30.0, 111.0, 31.0],
+    "scope_codes": ["SCOPE-EMERGENCY-OPS", "SCOPE-BASE-MAPPING"]
+  },
+  "emergency_order": {
+    "ref": "ORD-FIRE-2026-09-27",
+    "department": "应急管理部门",
+    "requester_ref": "DUTY-7",
+    "target_ref": "TGT-RIVER-MOUTH",
+    "scope_code": "SCOPE-EMERGENCY-OPS",
+    "imaging_mode": "optical_hr",
+    "timeliness": "emergency",
+    "window_start": "2026-09-26T00:00:00Z",
+    "window_end": "2026-09-27T12:00:00Z",
+    "deadline_at": "2026-09-27T12:00:00Z",
+    "deliverable": "应急值班席-GIS终端",
+    "usage_boundary": "限本次灾情研判，不得转作商业用途",
+    "require_onboard_processing": true
+  },
+  "mapping_order_duplicate_name": {
+    "ref": "ORD-MAP-8821",
+    "department": "基础测绘部门",
+    "requester_ref": "MAPPER-3",
+    "target_name": "河口监测区",
+    "scope_code": "SCOPE-BASE-MAPPING",
+    "imaging_mode": "optical_hr",
+    "timeliness": "routine",
+    "window_start": "2026-09-26T00:00:00Z",
+    "window_end": "2026-09-30T00:00:00Z",
+    "deliverable": "基础测绘成果库",
+    "note": "与应急订单指向同一目标，但授权范围不同：仅提示重叠，禁止共享"
+  },
+  "opportunity": {
+    "spacecraft_ref": "PIESAT-2-13",
+    "window_start": "2026-09-27T02:00:00Z",
+    "window_end": "2026-09-27T02:10:00Z",
+    "bbox": [109.5, 29.5, 111.5, 31.5],
+    "supported_modes": ["optical_hr"],
+    "energy_cost": 1,
+    "storage_cost": 1,
+    "receipt_due_after_minutes": 60
+  },
+  "receipt": {
+    "source_ref": "PIESAT-2-13",
+    "source_sequence": 1,
+    "result": "imaged",
+    "occurred_at": "2026-09-27T02:05:00Z",
+    "expected_shards": 2
+  },
+  "shard": {
+    "shard_ref": "RMT-20260927-00",
+    "seq": 0,
+    "checksum_sha256": "2090bfa3fc33c39f626ed303f04dc267fcd51b9ad0a14d79a64a22e3994c17ad"
+  }
 }
