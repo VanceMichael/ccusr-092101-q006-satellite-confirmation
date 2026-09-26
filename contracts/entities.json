@@ -1,19 +1,128 @@
 {
-  "schema_version": "1",
-  "domain": "多星入轨确认事件账",
-  "required_fields": [
-    "launch_ref",
-    "spacecraft_ref",
-    "event_kind",
-    "source_ref",
-    "source_sequence",
-    "occurred_at"
+  "schema_version": "2",
+  "domain": "观测订单编排",
+  "principles": [
+    "外部主体一律使用不含真实身份信息的引用编号",
+    "时间采用带偏移量的 ISO 8601 字符串",
+    "外部业务事件必须携带 source_ref 与 source_sequence，同号去重",
+    "数据内容只记录 sha256 校验摘要，不落地真实影像",
+    "不同 data_scope 的订单只可协调排期，不得共享或合并数据",
+    "目标重叠只产生合并提示，合并必须由任务经理显式接受",
+    "冻结后同一成像机会只能被一个占用中的分配使用",
+    "应急插单必须先展示被挤出订单并取得批准",
+    "卫星不可用、机会修订、回执晚到只让受影响订单重排，已交付产品继续引用原计划"
   ],
+  "entities": {
+    "observation_order": {
+      "required_fields": [
+        "order_id",
+        "department",
+        "target_name",
+        "geometry",
+        "bbox",
+        "allowed_start",
+        "allowed_end",
+        "imaging_modes",
+        "timeliness",
+        "delivery_recipients",
+        "data_scope",
+        "storage_mb",
+        "deadline",
+        "status"
+      ],
+      "enum": {
+        "timeliness": ["emergency", "routine", "refresh"],
+        "status": [
+          "registered",
+          "candidate",
+          "planned",
+          "frozen",
+          "in_execution",
+          "delivered",
+          "replanning",
+          "expired",
+          "merged"
+        ]
+      }
+    },
+    "spacecraft": {
+      "required_fields": [
+        "spacecraft_ref",
+        "capability_version",
+        "supported_modes",
+        "onboard_ai",
+        "storage_capacity_mb",
+        "energy_capacity_wh",
+        "status"
+      ]
+    },
+    "imaging_opportunity": {
+      "required_fields": [
+        "opportunity_id",
+        "spacecraft_ref",
+        "forecast_version",
+        "window_start",
+        "window_end",
+        "imaging_mode",
+        "bbox",
+        "storage_budget_mb",
+        "energy_budget_wh",
+        "status"
+      ],
+      "enum": {
+        "status": ["forecast", "superseded", "cancelled"]
+      }
+    },
+    "candidate_plan": {
+      "required_fields": ["order_id", "opportunity_id", "spacecraft_ref", "feasible", "score", "rank", "rationale"]
+    },
+    "approval_request": {
+      "required_fields": [
+        "approval_id",
+        "kind",
+        "order_id",
+        "opportunity_id",
+        "displaced_allocations",
+        "status",
+        "approver_ref"
+      ],
+      "enum": {
+        "kind": ["emergency_insertion"],
+        "status": ["pending", "approved", "rejected"]
+      }
+    },
+    "data_shard": {
+      "required_fields": ["allocation_id", "product_version", "shard_index", "checksum_sha256", "size_mb"]
+    },
+    "data_product_version": {
+      "required_fields": [
+        "product_id",
+        "version",
+        "order_id",
+        "allocation_id",
+        "source_plan_id",
+        "status",
+        "shard_checksums",
+        "aggregate_checksum"
+      ],
+      "enum": {
+        "status": ["incomplete", "assembled", "withdrawn"]
+      }
+    },
+    "product_notification": {
+      "required_fields": ["product_id", "version", "subscriber_ref", "kind", "status"],
+      "enum": {
+        "kind": ["shard_missing", "assembled", "reprocessed", "withdrawn"],
+        "status": ["pending", "delivered", "acked"]
+      }
+    }
+  },
   "time_format": "ISO 8601 with offset",
   "sample": {
-    "launch_ref": "LAUNCH-DEMO",
-    "spacecraft_ref": "PIESAT-2-13",
-    "event_kind": "first_contact",
-    "source_sequence": 7
+    "department": "应急办",
+    "target_name": "受灾镇区",
+    "timeliness": "emergency",
+    "data_scope": "SCOPE-EM",
+    "delivery_recipients": ["sub-em"]
   }
 }

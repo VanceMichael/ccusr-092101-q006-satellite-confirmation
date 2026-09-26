@@ -1,6 +1,6 @@
 {
-  "name": "satellite-confirmation",
-  "version": "0.1.0",
+  "name": "observation-ordering",
+  "version": "0.2.0",
   "private": true,
   "scripts": {
     "start": "node src/server.js",
